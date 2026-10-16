@@ -20,7 +20,7 @@ test "$(/usr/libexec/PlistBuddy -c 'Print CFBundleShortVersionString' "$app_path
 codesign --verify --deep --strict "$app_path"
 file "$app_path/Contents/MacOS/NoteBoard"
 # 防止架构映射写反后仍在 Rosetta 环境中被误判为正确安装。
-lipo -verify_arch "$(uname -m)" "$app_path/Contents/MacOS/NoteBoard"
+lipo "$app_path/Contents/MacOS/NoteBoard" -verify_arch "$(uname -m)"
 # 正常路径显式核验卸载结果；退出陷阱仅用于失败时尽量清理。
 brew uninstall --cask crazyfigure/tap/noteboard
 test ! -e "$app_path"
