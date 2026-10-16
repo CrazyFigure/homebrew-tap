@@ -1,0 +1,26 @@
+name: Validate NoteBoard cask
+
+on:
+  push:
+    paths: ['Casks/**', 'scripts/**', '.github/workflows/**']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  install:
+    # 在真实的两个 Mac 架构上分别校验下载、安装和卸载，不把交叉编译当作安装验收。
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, macos-15-intel]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate and install
+        env:
+          HOMEBREW_NO_AUTO_UPDATE: '1'
+        run: bash scripts/validate-cask.sh

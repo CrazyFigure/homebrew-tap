@@ -1,0 +1,44 @@
+name: Update NoteBoard
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '23 */6 * * *'
+
+concurrency:
+  group: update-noteboard
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: macos-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Check upstream release and both DMGs
+        id: release
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node scripts/update-noteboard.mjs
+      # 机器人提交不会再次触发 push 工作流，因此在提交前完成安装验证。
+      - name: Validate updated cask
+        if: steps.release.outputs.changed == 'true'
+        env:
+          HOMEBREW_NO_AUTO_UPDATE: '1'
+        run: bash scripts/validate-cask.sh
+      - name: Publish updated cask
+        if: steps.release.outputs.changed == 'true'
+        env:
+          RELEASE_VERSION: ${{ steps.release.outputs.version }}
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add Casks/noteboard.rb
+          git commit -m "Update NoteBoard to $RELEASE_VERSION"
+          git push
