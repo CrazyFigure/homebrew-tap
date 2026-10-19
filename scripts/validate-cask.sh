@@ -6,6 +6,12 @@ app_path="$app_dir/NoteBoard.app"
 version=$(sed -nE 's/^  version "([^"]+)"/\1/p' Casks/noteboard.rb)
 mkdir -p "$app_dir"
 brew tap --custom-remote crazyfigure/tap "$GITHUB_WORKSPACE"
+# tap 克隆只包含已提交版本；同步工作区待发布清单，确保下载和安装验证使用本次更新。
+# 两个路径可能指向同一份文件，内容一致时跳过复制，避免同文件复制报错。
+tap_cask="$(brew --repo crazyfigure/tap)/Casks/noteboard.rb"
+if ! cmp -s Casks/noteboard.rb "$tap_cask"; then
+  cp Casks/noteboard.rb "$tap_cask"
+fi
 # 新版 Homebrew 要求显式信任自有 Tap；只信任本次测试的一个 Cask。
 if brew command trust >/dev/null 2>&1; then
   brew trust --cask crazyfigure/tap/noteboard
