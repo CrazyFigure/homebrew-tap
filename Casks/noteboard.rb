@@ -2,9 +2,9 @@
 cask "noteboard" do
   arch arm: "aarch64", intel: "x64"
 
-  version "0.6.9"
-  sha256 arm:   "f32cc1d5c70a6f7a1a7ebbbc415c0963f114d875938d8cdbe2fc411b6bd30e6b",
-         intel: "179cfae12adc859187e5c1e75728fb6e7009ba7b33cd732f7d88c73785409a42"
+  version "0.7.0"
+  sha256 arm:   "b4f9106ffa8c08ea5473ae6bf3c5f2b4bff37a50f9d2fc29f7c80c04e0bc7a48",
+         intel: "1e6e927eea7723deca533a588e37f14fbc55ed0b9bea59890c2b1ed4823cc3e3"
 
   url "https://github.com/CrazyFigure/NoteBoard/releases/download/v#{version}/NoteBoard_#{version}_#{arch}.dmg"
   name "NoteBoard"
